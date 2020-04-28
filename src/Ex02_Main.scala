@@ -7,7 +7,8 @@ import scala.io.Source
 
 object Ex02_Main {
 
-  class VMtoASMConvertor(targetfile:File=null,sourcefile:String=null) extends VMToASM(targetFile = targetfile) {
+  class VMtoASMConvertor(targetfile:File=null,sourcefile:String=null) extends VMToASM(targetFile = targetfile ,sourcefileName =null) {
+
     private final var returnAddresscount=0
     private final var  FunctionloopCounter=0
     private final val  ifGOTOASM=Array(
@@ -259,6 +260,7 @@ object Ex02_Main {
       if (file.getName().endsWith(".vm")) {
         println("Now I read from file:" + file.getName())
         //create new asm file
+         asmConverter.setSourcefileName(file.getName.replaceAll(".vm",""))
 
 
         for (line <- Source.fromFile(file).getLines()) {

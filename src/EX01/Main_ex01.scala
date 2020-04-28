@@ -6,7 +6,11 @@ import scala.io.Source
 
 object Main_ex01 {
 
-  class VMToASM(targetFile: File = null) {
+  class VMToASM(targetFile: File = null,private var sourcefileName:String=null) {
+    //setter for source file name of static
+    def setSourcefileName(name:String): Unit ={
+      sourcefileName=name
+    }
     private var coditionCount = 0
     //<editor-fold desc="Operators">
 
@@ -328,7 +332,7 @@ object Main_ex01 {
                             writePushPointer(pushPointer0ASM, targetFile)
                             else
                               writePushPointer(pushPointer1ASM, targetFile)
-        case "static" => writePushStatic(targetFile, args(2))
+        case "static" => writePushStatic(targetFile, args(2),sourcefileName)
         case "argument" => writePushArgument(targetFile, args(2))
         case "temp" => writePushTemp(targetFile: File, args(2))
         case whoa => return "Compilation error.tokken " + args(1).toString() + "is not leagal!!"
@@ -345,7 +349,7 @@ object Main_ex01 {
                               writePopPointer(popPointer0ASM, targetFile)
                            else
                               writePopPointer(popPointer1ASM, targetFile)
-        case "static" => writePopStatic(targetFile, arg)
+        case "static" => writePopStatic(targetFile, arg,sourcefileName)
         case "argument" => writePopArgument(targetFile,arg)
         case "temp" => writePopTemp(targetFile, arg)
         case whoa => return "Compilation error.tokken " + arg.toString() + "is not leagal!!"
@@ -497,22 +501,22 @@ object Main_ex01 {
         }
       writer.close()
     }
-    private def writePushStatic(file: File, value: String): Unit = {
+    private def writePushStatic(file: File, value: String,className:String): Unit = {
       val writer = new PrintWriter(new FileOutputStream(file, true))
       for (cmd <- pushStaticASM) {
         if (cmd.equals("@ClassA.0"))
-          writer.append("@" + value.toString() + "\n")
+          writer.append("@"+className+"." + value.toString() + "\n")
         else
           writer.append(cmd + "\n")
       }
       writer.close()
     }
 
-    private def writePopStatic(file: File, value: String): Unit = {
+    private def writePopStatic(file: File, value: String, className:String): Unit = {
       val writer = new PrintWriter(new FileOutputStream(file, true))
       for (cmd <- popStaticASM) {
         if (cmd.equals("@ClassA.0"))
-          writer.append("@" + value.toString() + "\n")
+          writer.append("@" + className+"."+value.toString() + "\n")
         else
           writer.append(cmd + "\n")
       }
